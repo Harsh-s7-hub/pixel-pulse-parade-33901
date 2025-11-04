@@ -20,6 +20,8 @@ const Navigation = () => {
   const navItems = [
     { label: "About", href: "#about", type: "scroll" },
     { label: "Projects", href: "/projects", type: "route" },
+    { label: "Certifications", href: "/certifications", type: "route" },
+    { label: "Timeline", href: "/timeline", type: "route" },
     { label: "Skills", href: "#skills", type: "scroll" },
     { label: "Contact", href: "#contact", type: "scroll" },
   ];
