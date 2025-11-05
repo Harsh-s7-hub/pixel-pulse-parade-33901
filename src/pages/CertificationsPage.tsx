@@ -5,6 +5,12 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ArrowLeft, Award, Calendar, Building2, ExternalLink, CheckCircle2 } from "lucide-react";
 import { Link } from "react-router-dom";
+import certAws from "@/assets/cert-aws.jpg";
+import certScrum from "@/assets/cert-scrum.jpg";
+import certGcp from "@/assets/cert-gcp.jpg";
+import certKubernetes from "@/assets/cert-kubernetes.jpg";
+import certMongodb from "@/assets/cert-mongodb.jpg";
+import certMeta from "@/assets/cert-meta.jpg";
 
 interface Certificate {
   id: string;
@@ -35,7 +41,7 @@ const CertificationsPage = () => {
       credentialUrl: "https://aws.amazon.com/verification",
       description: "Validates advanced technical skills and experience in designing distributed applications and systems on the AWS platform. Demonstrates ability to architect and deploy secure and robust applications.",
       skills: ["AWS", "Cloud Architecture", "Security", "Scalability", "Cost Optimization"],
-      imageUrl: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&h=500&fit=crop",
+      imageUrl: certAws,
       verified: true
     },
     {
@@ -47,7 +53,7 @@ const CertificationsPage = () => {
       credentialUrl: "https://scrum.org/verify",
       description: "Demonstrates fundamental level of Scrum mastery. Shows understanding of Scrum framework and how to apply it to maximize the value delivered by the Scrum Team.",
       skills: ["Scrum", "Agile", "Team Leadership", "Sprint Planning", "Stakeholder Management"],
-      imageUrl: "https://images.unsplash.com/photo-1552664730-d307ca884978?w=800&h=500&fit=crop",
+      imageUrl: certScrum,
       verified: true
     },
     {
@@ -60,7 +66,7 @@ const CertificationsPage = () => {
       credentialUrl: "https://cloud.google.com/certification/verify",
       description: "Professional Cloud Architects enable organizations to leverage Google Cloud technologies. Demonstrates ability to design, develop, and manage robust, secure, scalable, highly available, and dynamic solutions.",
       skills: ["Google Cloud Platform", "Architecture Design", "Infrastructure", "Security", "Migration"],
-      imageUrl: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800&h=500&fit=crop",
+      imageUrl: certGcp,
       verified: true
     },
     {
@@ -73,7 +79,7 @@ const CertificationsPage = () => {
       credentialUrl: "https://training.linuxfoundation.org/certification/verify",
       description: "Demonstrates skills, knowledge, and competency to perform the responsibilities of a Kubernetes administrator. Covers core concepts, installation, networking, storage, security, and troubleshooting.",
       skills: ["Kubernetes", "Container Orchestration", "Docker", "DevOps", "System Administration"],
-      imageUrl: "https://images.unsplash.com/photo-1667372393119-3d4c48d07fc9?w=800&h=500&fit=crop",
+      imageUrl: certKubernetes,
       verified: true
     },
     {
@@ -85,7 +91,7 @@ const CertificationsPage = () => {
       credentialUrl: "https://university.mongodb.com/verify",
       description: "Validates knowledge of MongoDB fundamentals and the ability to work with MongoDB in application development. Covers CRUD operations, indexing, aggregation framework, and best practices.",
       skills: ["MongoDB", "NoSQL", "Database Design", "Data Modeling", "Performance Optimization"],
-      imageUrl: "https://images.unsplash.com/photo-1544383835-bda2bc66a55d?w=800&h=500&fit=crop",
+      imageUrl: certMongodb,
       verified: true
     },
     {
@@ -97,7 +103,7 @@ const CertificationsPage = () => {
       credentialUrl: "https://coursera.org/verify/professional-cert",
       description: "Comprehensive program covering modern front-end development. Includes React, responsive design, version control, UI/UX principles, and full-stack fundamentals.",
       skills: ["React", "JavaScript", "HTML/CSS", "Version Control", "Responsive Design", "UI/UX"],
-      imageUrl: "https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=800&h=500&fit=crop",
+      imageUrl: certMeta,
       verified: true
     }
   ];
