@@ -1,5 +1,7 @@
 import { Card } from "@/components/ui/card";
-import { Code2, Palette, Rocket, Award, Users, Zap } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Code2, Palette, Rocket, Award, Users, Zap, Download, Calendar, CheckCircle2 } from "lucide-react";
 import profilePhoto from "@/assets/profile-photo.jpg";
 
 const About = () => {
@@ -75,6 +77,15 @@ const About = () => {
 
           {/* Text content */}
           <div className="animate-slide-in-right space-y-6">
+            {/* Availability Status */}
+            <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 rounded-full px-4 py-2 mb-2">
+              <div className="relative">
+                <CheckCircle2 className="h-4 w-4 text-primary" />
+                <span className="absolute inset-0 h-4 w-4 rounded-full bg-primary animate-ping opacity-75" />
+              </div>
+              <span className="text-sm font-medium text-primary">Available for Freelance Work</span>
+            </div>
+
             <div className="space-y-4">
               <h3 className="text-3xl md:text-4xl font-bold text-foreground">
                 Hi, I'm <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">Your Name</span>
@@ -108,11 +119,39 @@ const About = () => {
                     <div className="text-sm text-muted-foreground">
                       {stat.label}
                     </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex flex-col sm:flex-row gap-4 justify-center mt-16 animate-fade-in-up">
+          <Button
+            size="lg"
+            className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-glow transition-all duration-300 hover:scale-105"
+            onClick={() => {
+              // Generate a simple resume download
+              const resumeUrl = "https://drive.google.com/file/d/YOUR_FILE_ID/view"; // Replace with your resume link
+              window.open(resumeUrl, "_blank");
+            }}
+          >
+            <Download className="mr-2 h-5 w-5" />
+            Download Resume
+          </Button>
+          <Button
+            size="lg"
+            variant="outline"
+            className="border-primary/50 hover:border-primary hover:bg-primary/10 transition-all duration-300 hover:scale-105"
+            onClick={() => {
+              // Open Calendly or calendar booking link
+              window.open("https://calendly.com/your-link", "_blank"); // Replace with your Calendly link
+            }}
+          >
+            <Calendar className="mr-2 h-5 w-5" />
+            Schedule a Call
+          </Button>
+        </div>
+      </div>
         </div>
 
         {/* Highlights cards */}

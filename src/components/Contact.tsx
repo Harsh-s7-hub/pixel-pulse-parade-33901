@@ -1,8 +1,21 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Mail, MapPin, Phone } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Mail, MapPin, Phone, Send, Copy, Check } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 const Contact = () => {
+  const { toast } = useToast();
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    message: "",
+  });
+  const [copied, setCopied] = useState(false);
+
   const contactInfo = [
     {
       icon: Mail,
@@ -67,15 +80,89 @@ const Contact = () => {
           })}
         </div>
 
-        <div className="text-center animate-fade-in-up">
-          <Button 
-            size="lg"
-            className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-glow transition-all duration-300 hover:scale-105"
+        {/* Contact Form */}
+        <Card className="bg-gradient-card border-border/50 p-8 animate-fade-in-up">
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              // For now, copy to clipboard and open email client
+              const mailtoLink = `mailto:hello@example.com?subject=Message from ${formData.name}&body=${formData.message}%0A%0AFrom: ${formData.name} (${formData.email})`;
+              window.location.href = mailtoLink;
+              toast({
+                title: "Opening email client",
+                description: "Your message has been prepared in your default email app",
+              });
+            }}
+            className="space-y-6"
           >
-            <Mail className="mr-2 h-5 w-5" />
-            Send Me a Message
-          </Button>
-        </div>
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <Label htmlFor="name" className="text-foreground">Name</Label>
+                <Input
+                  id="name"
+                  placeholder="Your name"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  required
+                  className="bg-background border-border focus:border-primary"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="email" className="text-foreground">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="your.email@example.com"
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  required
+                  className="bg-background border-border focus:border-primary"
+                />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="message" className="text-foreground">Message</Label>
+              <Textarea
+                id="message"
+                placeholder="Tell me about your project or just say hi!"
+                rows={6}
+                value={formData.message}
+                onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                required
+                className="bg-background border-border focus:border-primary resize-none"
+              />
+            </div>
+            <div className="flex gap-4">
+              <Button
+                type="submit"
+                size="lg"
+                className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground shadow-glow transition-all duration-300 hover:scale-105"
+              >
+                <Send className="mr-2 h-5 w-5" />
+                Send Message
+              </Button>
+              <Button
+                type="button"
+                size="lg"
+                variant="outline"
+                className="border-primary/50 hover:border-primary hover:bg-primary/10"
+                onClick={() => {
+                  const messageText = `Name: ${formData.name}\nEmail: ${formData.email}\nMessage: ${formData.message}`;
+                  navigator.clipboard.writeText(messageText);
+                  setCopied(true);
+                  setTimeout(() => setCopied(false), 2000);
+                  toast({
+                    title: "Copied to clipboard",
+                    description: "Message details copied successfully",
+                  });
+                }}
+              >
+                {copied ? <Check className="mr-2 h-5 w-5" /> : <Copy className="mr-2 h-5 w-5" />}
+                Copy
+              </Button>
+            </div>
+          </form>
+        </Card>
       </div>
     </section>
   );
