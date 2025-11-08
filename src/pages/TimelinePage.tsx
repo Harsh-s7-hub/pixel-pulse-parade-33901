@@ -1,4 +1,5 @@
-import { ArrowLeft, Briefcase, GraduationCap, Award, Code, Rocket } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { ArrowLeft, Briefcase, GraduationCap, Award, Code, Rocket, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -19,6 +20,33 @@ interface TimelineEvent {
 }
 
 const TimelinePage = () => {
+  const [visibleItems, setVisibleItems] = useState<Set<string>>(new Set());
+  const observerRef = useRef<IntersectionObserver | null>(null);
+  
+  useEffect(() => {
+    observerRef.current = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setVisibleItems((prev) => new Set(prev).add(entry.target.id));
+          }
+        });
+      },
+      { threshold: 0.2, rootMargin: "0px 0px -100px 0px" }
+    );
+
+    return () => observerRef.current?.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const elements = document.querySelectorAll('[data-timeline-item]');
+    elements.forEach((el) => observerRef.current?.observe(el));
+    
+    return () => {
+      elements.forEach((el) => observerRef.current?.unobserve(el));
+    };
+  }, []);
+
   const timeline: TimelineEvent[] = [
     {
       id: "1",
@@ -169,93 +197,186 @@ const TimelinePage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background relative overflow-hidden">
+      {/* Animated background elements */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute top-20 left-10 w-72 h-72 bg-primary/5 rounded-full blur-3xl animate-float" />
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-accent/5 rounded-full blur-3xl animate-float" style={{ animationDelay: "1s" }} />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-r from-primary/3 to-accent/3 rounded-full blur-3xl animate-pulse-glow" />
+      </div>
+
       {/* Header */}
-      <header className="sticky top-0 z-40 w-full border-b border-border/50 bg-background/95 backdrop-blur-md">
+      <header className="sticky top-0 z-40 w-full border-b border-border/50 bg-background/80 backdrop-blur-xl">
         <div className="container mx-auto px-6 py-4 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors">
-            <ArrowLeft className="h-5 w-5" />
-            <span>Back to Home</span>
+          <Link 
+            to="/" 
+            className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-all duration-300 group"
+          >
+            <ArrowLeft className="h-5 w-5 group-hover:-translate-x-1 transition-transform" />
+            <span className="font-medium">Back to Home</span>
           </Link>
-          <h1 className="text-2xl font-bold text-foreground">Professional Timeline</h1>
-          <div className="w-24" />
+          <h1 className="text-2xl font-bold bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient">
+            Professional Timeline
+          </h1>
+          <div className="w-32" />
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="container mx-auto px-6 py-12">
-        <div className="text-center mb-16 animate-fade-in-up">
-          <div className="inline-flex items-center justify-center p-3 bg-primary/10 rounded-full mb-6">
-            <Rocket className="h-8 w-8 text-primary" />
+      <main className="container mx-auto px-6 py-16 relative">
+        {/* Hero Section */}
+        <div className="text-center mb-20 animate-fade-in-up">
+          <div className="inline-flex items-center justify-center relative mb-6">
+            <div className="absolute inset-0 bg-gradient-to-r from-primary to-accent rounded-full blur-xl opacity-50 animate-pulse-glow" />
+            <div className="relative p-4 bg-gradient-to-br from-primary/20 to-accent/20 rounded-full border-2 border-primary/30">
+              <Rocket className="h-10 w-10 text-primary animate-float" />
+            </div>
+            <Sparkles className="absolute -top-2 -right-2 h-5 w-5 text-accent animate-pulse" />
           </div>
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 text-foreground">
-            My Professional Journey
+          
+          <h2 className="text-5xl md:text-7xl font-bold mb-6 text-foreground">
+            My Professional{" "}
+            <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient">
+              Journey
+            </span>
           </h2>
-          <div className="w-20 h-1 bg-gradient-primary mx-auto mb-8" />
-          <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">
-            From engineering student to senior developer - A timeline of growth, learning, and achievements
+          
+          <div className="flex items-center justify-center gap-3 mb-8">
+            <div className="h-1 w-12 bg-gradient-to-r from-transparent to-primary rounded-full" />
+            <div className="h-1 w-24 bg-gradient-primary rounded-full animate-pulse-glow" />
+            <div className="h-1 w-12 bg-gradient-to-l from-transparent to-accent rounded-full" />
+          </div>
+          
+          <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+            From engineering student to senior developer - A timeline of{" "}
+            <span className="text-primary font-semibold">growth</span>,{" "}
+            <span className="text-accent font-semibold">learning</span>, and{" "}
+            <span className="text-primary font-semibold">achievements</span>
           </p>
         </div>
 
         {/* Timeline */}
-        <div className="max-w-5xl mx-auto relative">
-          {/* Vertical line */}
-          <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-primary via-accent to-primary"></div>
+        <div className="max-w-6xl mx-auto relative">
+          {/* Animated Vertical line with gradient */}
+          <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-1 overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-b from-primary via-accent to-primary opacity-30" />
+            <div className="absolute inset-0 bg-gradient-to-b from-primary via-accent to-primary animate-shimmer" 
+                 style={{ 
+                   backgroundSize: "200% 200%",
+                   animation: "shimmer 3s linear infinite"
+                 }} 
+            />
+          </div>
 
-          <div className="space-y-12">
+          <div className="space-y-16">
             {timeline.map((event, index) => {
               const Icon = event.icon;
               const isEven = index % 2 === 0;
+              const isVisible = visibleItems.has(event.id);
 
               return (
                 <div
                   key={event.id}
+                  id={event.id}
+                  data-timeline-item
                   className={`relative flex items-center ${
                     isEven ? "md:flex-row" : "md:flex-row-reverse"
-                  } animate-fade-in-up`}
-                  style={{ animationDelay: `${index * 0.1}s` }}
+                  } transition-all duration-1000 ${
+                    isVisible 
+                      ? "opacity-100 translate-y-0" 
+                      : "opacity-0 translate-y-20"
+                  }`}
+                  style={{ 
+                    transitionDelay: `${index * 100}ms`,
+                  }}
                 >
-                  {/* Timeline dot */}
-                  <div className="absolute left-4 md:left-1/2 w-8 h-8 -ml-4 flex items-center justify-center">
-                    <div className={`w-8 h-8 rounded-full bg-gradient-to-br ${event.color} flex items-center justify-center shadow-glow border-2 border-background`}>
-                      <Icon className="h-4 w-4 text-white" />
+                  {/* Timeline dot with pulse animation */}
+                  <div className="absolute left-4 md:left-1/2 w-16 h-16 -ml-8 flex items-center justify-center z-10">
+                    <div className={`absolute inset-0 rounded-full bg-gradient-to-br ${event.color} opacity-20 animate-ping`} 
+                         style={{ animationDuration: "3s" }} 
+                    />
+                    <div className={`absolute inset-2 rounded-full bg-gradient-to-br ${event.color} opacity-40 blur-md`} />
+                    <div className={`relative w-14 h-14 rounded-full bg-gradient-to-br ${event.color} flex items-center justify-center shadow-glow border-4 border-background group-hover:scale-110 transition-transform duration-300`}>
+                      <Icon className="h-7 w-7 text-white animate-pulse" />
                     </div>
                   </div>
 
                   {/* Content */}
-                  <div className={`w-full md:w-1/2 ${isEven ? "md:pr-12 pl-16 md:pl-0" : "md:pl-12 pl-16 md:pr-0"}`}>
-                    <Card className="bg-gradient-card border-border/50 hover:border-primary/50 transition-all duration-300 hover:shadow-card group">
-                      <div className={`h-1 bg-gradient-to-r ${event.color}`} />
-                      <CardHeader>
-                        <div className="flex items-start justify-between gap-2 mb-2">
-                          <CardTitle className="text-xl text-foreground group-hover:text-primary transition-colors">
+                  <div className={`w-full md:w-[calc(50%-3rem)] ${isEven ? "md:pr-12 pl-24 md:pl-0" : "md:pl-12 pl-24 md:pr-0"}`}>
+                    <Card className={`
+                      relative overflow-hidden
+                      bg-gradient-card border-border/50 
+                      hover:border-primary/50 
+                      transition-all duration-500 
+                      hover:shadow-card hover:shadow-glow
+                      group cursor-pointer
+                      ${isVisible ? "scale-100" : "scale-95"}
+                      hover:scale-[1.02]
+                    `}>
+                      {/* Shimmer effect on hover */}
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+                      
+                      <div className={`h-1.5 bg-gradient-to-r ${event.color} relative overflow-hidden`}>
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer" />
+                      </div>
+                      
+                      <CardHeader className="relative">
+                        <div className="flex items-start justify-between gap-3 mb-3">
+                          <CardTitle className="text-2xl text-foreground group-hover:text-primary transition-colors duration-300 flex items-center gap-2">
                             {event.title}
+                            <Sparkles className="h-4 w-4 text-accent opacity-0 group-hover:opacity-100 transition-opacity" />
                           </CardTitle>
-                          <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20 whitespace-nowrap">
+                          <Badge 
+                            variant="secondary" 
+                            className={`
+                              bg-gradient-to-br ${event.color} 
+                              text-white border-0 
+                              whitespace-nowrap
+                              animate-bounce-in
+                              shadow-lg
+                            `}
+                            style={{ animationDelay: `${index * 100 + 200}ms` }}
+                          >
                             {event.type}
                           </Badge>
                         </div>
-                        <CardDescription className="space-y-1">
-                          <div className="font-medium text-foreground">{event.organization}</div>
-                          <div className="text-sm">{event.location}</div>
-                          <div className="text-sm text-primary">
+                        <CardDescription className="space-y-2">
+                          <div className="font-semibold text-foreground text-base">{event.organization}</div>
+                          <div className="text-sm text-muted-foreground">{event.location}</div>
+                          <div className="text-sm font-medium bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
                             {event.startDate} {event.endDate && `- ${event.endDate}`}
                           </div>
                         </CardDescription>
                       </CardHeader>
-                      <CardContent className="space-y-4">
-                        <p className="text-muted-foreground leading-relaxed">
+                      
+                      <CardContent className="space-y-6 relative">
+                        <p className="text-muted-foreground leading-relaxed text-base">
                           {event.description}
                         </p>
 
                         {event.highlights.length > 0 && (
-                          <div>
-                            <h4 className="text-sm font-semibold text-foreground mb-2">Key Highlights</h4>
-                            <ul className="space-y-1 text-sm text-muted-foreground">
+                          <div className="space-y-3">
+                            <h4 className="text-sm font-bold text-foreground flex items-center gap-2">
+                              <div className="h-1 w-8 bg-gradient-primary rounded-full" />
+                              Key Highlights
+                            </h4>
+                            <ul className="space-y-2.5">
                               {event.highlights.map((highlight, i) => (
-                                <li key={i} className="flex gap-2">
-                                  <span className="text-primary mt-1.5">•</span>
-                                  <span>{highlight}</span>
+                                <li 
+                                  key={i} 
+                                  className={`
+                                    flex gap-3 text-sm text-muted-foreground
+                                    opacity-0 animate-fade-in
+                                  `}
+                                  style={{ 
+                                    animationDelay: `${index * 100 + 300 + i * 100}ms`,
+                                    animationFillMode: "forwards"
+                                  }}
+                                >
+                                  <span className={`text-primary mt-1 text-lg font-bold bg-gradient-to-br ${event.color} bg-clip-text text-transparent`}>
+                                    ▸
+                                  </span>
+                                  <span className="flex-1">{highlight}</span>
                                 </li>
                               ))}
                             </ul>
@@ -263,11 +384,29 @@ const TimelinePage = () => {
                         )}
 
                         {event.skills.length > 0 && (
-                          <div>
-                            <h4 className="text-sm font-semibold text-foreground mb-2">Skills & Technologies</h4>
+                          <div className="space-y-3">
+                            <h4 className="text-sm font-bold text-foreground flex items-center gap-2">
+                              <div className="h-1 w-8 bg-gradient-primary rounded-full" />
+                              Skills & Technologies
+                            </h4>
                             <div className="flex flex-wrap gap-2">
                               {event.skills.map((skill, i) => (
-                                <Badge key={i} variant="secondary" className="bg-secondary/50 text-secondary-foreground text-xs">
+                                <Badge 
+                                  key={i} 
+                                  variant="secondary" 
+                                  className={`
+                                    bg-secondary/50 hover:bg-secondary/80
+                                    text-secondary-foreground text-xs font-medium
+                                    transition-all duration-300
+                                    hover:scale-110 hover:shadow-md
+                                    cursor-default
+                                    opacity-0 animate-scale-in
+                                  `}
+                                  style={{ 
+                                    animationDelay: `${index * 100 + 500 + i * 50}ms`,
+                                    animationFillMode: "forwards"
+                                  }}
+                                >
                                   {skill}
                                 </Badge>
                               ))}
@@ -281,6 +420,13 @@ const TimelinePage = () => {
               );
             })}
           </div>
+        </div>
+
+        {/* Scroll indicator at bottom */}
+        <div className="text-center mt-20 animate-fade-in-up" style={{ animationDelay: "1s" }}>
+          <p className="text-muted-foreground text-sm">
+            This is just the beginning of the journey... ✨
+          </p>
         </div>
       </main>
     </div>
